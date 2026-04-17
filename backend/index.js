@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const connectDB = require('./src/db');
-const sessionRoutes = require('./src/routes/session');
-const adminRoutes = require('./src/routes/admin');
+const connectDB = require('./src/config/db.js');
+const sessionRoutes = require('./src/routes/session.js');
+const adminRoutes = require('./src/routes/admin.js');
 
 dotenv.config();
 connectDB();
