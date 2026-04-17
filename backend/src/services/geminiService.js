@@ -1,0 +1,54 @@
+require('dotenv').config();
+const Groq = require('groq-sdk');
+const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+const systemPrompt = `You are a warm, professional AI interviewer for Cuemath, hiring online math tutors.
+Your job is to assess soft skills — communication clarity, patience, warmth, ability to simplify concepts, and English fluency.
+Keep responses concise (2-3 sentences max). Be conversational, not robotic.
+If an answer is vague, follow up with "Can you give me a specific example?"
+If candidate goes off track, gently redirect.
+If answer is one word or too short, say "I'd love to hear more about that."
+Never assess or score during the conversation. Just interview naturally.`;
+
+const questions = [
+  "Tell me a little about yourself and your teaching experience.",
+  "How would you explain fractions to a 9-year-old who's really struggling?",
+  "A student has been stuck on a problem for 5 minutes and is getting frustrated. What do you do?",
+  "How do you know when a student has truly understood something versus just memorized it?",
+  "Tell me about a time a student surprised you — positively or negatively."
+];
+
+const chat = async (transcript) => {
+  const questionIndex = transcript.filter(t => t.speaker === 'ai').length;
+
+  let userPrompt;
+  if (transcript.length === 0) {
+    userPrompt = `Greet the candidate warmly and ask: "${questions[0]}"`;
+  } else if (questionIndex < questions.length) {
+    userPrompt = `Based on their last response, either follow up if vague, or transition naturally and ask: "${questions[questionIndex]}"`;
+  } else {
+    userPrompt = `Interview is complete. Thank the candidate warmly and tell them Cuemath will be in touch.`;
+  }
+
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    ...transcript.map(t => ({
+      role: t.speaker === 'ai' ? 'assistant' : 'user',
+      content: t.text
+    })),
+    { role: 'user', content: userPrompt }
+  ];
+
+  const response = await client.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    messages,
+    max_tokens: 150
+  });
+
+  return {
+    text: response.choices[0].message.content,
+    isComplete: questionIndex >= questions.length
+  };
+};
+
+module.exports = { chat };

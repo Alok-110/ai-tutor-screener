@@ -1,18 +1,26 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+require('dotenv').config();
+const Groq = require('groq-sdk');
+const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 const assess = async (transcript) => {
   const transcriptText = transcript
     .map(t => `${t.speaker === 'ai' ? 'Interviewer' : 'Candidate'}: ${t.text}`)
     .join('\n');
 
-  const prompt = `You are evaluating a tutor candidate for Cuemath based on this interview transcript.
+  const response = await client.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are an expert hiring evaluator. Return ONLY valid JSON, no markdown, no explanation.'
+      },
+      {
+        role: 'user',
+        content: `Evaluate this tutor candidate interview transcript for Cuemath:
 
 ${transcriptText}
 
-Score the candidate 1-5 on each dimension and return ONLY a valid JSON object, no markdown, no explanation:
+Return ONLY this JSON:
 {
   "clarity": <1-5>,
   "warmth": <1-5>,
@@ -26,10 +34,13 @@ Score the candidate 1-5 on each dimension and return ONLY a valid JSON object, n
     "warmth": "<exact quote from transcript>",
     "simplicity": "<exact quote from transcript>"
   }
-}`;
+}`
+      }
+    ],
+    max_tokens: 500
+  });
 
-  const result = await model.generateContent(prompt);
-  const raw = result.response.text().replace(/```json|```/g, '').trim();
+  const raw = response.choices[0].message.content.replace(/```json|```/g, '').trim();
   return JSON.parse(raw);
 };
 

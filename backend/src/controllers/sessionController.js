@@ -1,6 +1,6 @@
-const Candidate = require('../models/Candidate');
-const { chat } = require('../services/geminiService');
-const { assess } = require('../services/assessmentService');
+const Candidate = require('../models/Candidate.js');
+const { chat } = require('../services/geminiService.js');
+const { assess } = require('../services/assessmentService.js');
 
 const startSession = async (req, res) => {
   try {
