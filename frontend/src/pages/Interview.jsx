@@ -76,8 +76,8 @@ export default function Interview() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col">
-      <div className="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-white text-white flex flex-col">
+      <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div className="text-lg font-semibold">Cuemath Interview</div>
         <div className="text-sm text-gray-400">{localStorage.getItem('candidateName')}</div>
       </div>
@@ -88,7 +88,7 @@ export default function Interview() {
             <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl text-sm ${
               m.speaker === 'candidate'
                 ? 'bg-blue-600 text-white rounded-br-sm'
-                : 'bg-gray-800 text-gray-100 rounded-bl-sm'
+                : 'bg-gray-100 text-gray-800 rounded-bl-sm'
             }`}>
               {m.text}
             </div>
@@ -98,7 +98,7 @@ export default function Interview() {
       </div>
 
       <div className="border-t border-gray-800 px-6 py-6 flex flex-col items-center gap-3">
-        <p className="text-sm text-gray-400">{statusText[status]}</p>
+        <p className="text-sm text-gray-500">{statusText[status]}</p>
         <button
           onClick={listening ? stopListening : startListening}
           disabled={status !== 'listening'}
@@ -106,7 +106,7 @@ export default function Interview() {
             listening
               ? 'bg-red-500 hover:bg-red-400 animate-pulse'
               : status === 'listening'
-              ? 'bg-blue-600 hover:bg-blue-500'
+              ? 'bg-gray-900 hover:bg-blue-700'
               : 'bg-gray-700 cursor-not-allowed'
           }`}
         >
