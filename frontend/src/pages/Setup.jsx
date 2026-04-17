@@ -28,31 +28,31 @@ export default function Setup() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col items-center justify-center px-4">
       <div className="max-w-md w-full space-y-6">
         <div className="text-center space-y-1">
-          <h1 className="text-3xl font-bold">Let's get you set up</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Let's get you set up</h1>
           <p className="text-gray-400">This will only take a minute</p>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="text-sm text-gray-400 mb-1 block">Your full name</label>
+            <label className="text-sm text-gray-500 mb-1 block">Your full name</label>
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g. Priya Sharma"
-              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400"
             />
           </div>
 
           <div>
-            <label className="text-sm text-gray-400 mb-1 block">Applying for</label>
+            <label className="text-sm text-gray-500 mb-1 block">Applying for</label>
             <select
               value={role}
               onChange={e => setRole(e.target.value)}
-              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-gray-400"
             >
               <option value="">Select a role</option>
               <option value="Math Tutor">Math Tutor</option>
@@ -61,15 +61,15 @@ export default function Setup() {
             </select>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-3">
-            <p className="text-sm text-gray-400">Microphone check</p>
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+            <p className="text-sm text-gray-500">Microphone check</p>
             {micTested ? (
-              <p className="text-green-400 font-medium">✅ Microphone is working!</p>
+              <p className="text-green-600 font-medium text-sm">✅ Microphone is working!</p>
             ) : (
               <button
                 onClick={testMic}
                 disabled={testing}
-                className="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm transition-all"
+                className="w-full bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 py-2 rounded-lg text-sm transition-all"
               >
                 {testing ? 'Checking...' : '🎤 Test Microphone'}
               </button>
@@ -79,7 +79,7 @@ export default function Setup() {
 
         <button
           onClick={handleStart}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-4 rounded-xl transition-all duration-200 text-lg"
+          className="w-full bg-gray-900 hover:bg-gray-700 text-white font-semibold py-4 rounded-xl transition-all duration-200 text-base"
         >
           Start Interview →
         </button>
