@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const candidateSchema = new mongoose.Schema({
   name: String,
   role: String,
+  adminStatus: String,
   transcript: [
     {
       speaker: String, 
