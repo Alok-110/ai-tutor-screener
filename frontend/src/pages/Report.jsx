@@ -192,74 +192,26 @@ export default function Report() {
             zIndex: 50,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button
-              onClick={() => navigate("/admin")}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                background: "#f8fafc",
-                border: "1px solid #e2e8f0",
-                borderRadius: 8,
-                padding: "7px 14px",
-                cursor: "pointer",
-                fontSize: 13,
-                color: "#374151",
-                fontFamily: "DM Sans,sans-serif",
-                fontWeight: 500,
-              }}
-            >
-              <button
-                onClick={async (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setSending(true);
-                  try {
-                    await axios.post(
-                      `${import.meta.env.VITE_API_URL}/api/admin/candidates/${id}/send-report`,
-                    );
-                    setSent(true);
-                    setToast({
-                      msg: "Report sent to your email!",
-                      type: "success",
-                    });
-                  } catch (err) {
-                    setToast({
-                      msg: err.response?.data?.error || "Failed to send email",
-                      type: "error",
-                    });
-                  } finally {
-                    setSending(false);
-                  }
-                }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  background: sent
-                    ? "#f0fdf4"
-                    : "linear-gradient(135deg,#2563eb,#0ea5e9)",
-                  border: sent ? "1px solid #bbf7d0" : "none",
-                  borderRadius: 8,
-                  padding: "7px 16px",
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: sent ? "#15803d" : "#fff",
-                  fontFamily: "DM Sans,sans-serif",
-                  opacity: sending ? 0.7 : 1,
-                }}
-              >
-                {sent
-                  ? "✓ Report Sent"
-                  : sending
-                    ? "Sending…"
-                    : "📧 Send Report to My Email'"}
-              </button>
-              ← Back to Dashboard
-            </button>
-          </div>
+          <button
+            onClick={() => navigate("/admin")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: "#f8fafc",
+              border: "1px solid #e2e8f0",
+              borderRadius: 8,
+              padding: "7px 14px",
+              cursor: "pointer",
+              fontSize: 13,
+              color: "#374151",
+              fontFamily: "DM Sans,sans-serif",
+              fontWeight: 500,
+            }}
+          >
+            ← Back to Dashboard
+          </button>
+
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div
               style={{
@@ -297,13 +249,54 @@ export default function Report() {
               · Assessment Report
             </span>
           </div>
-          <span style={{ fontSize: 12, color: "#9ca3af" }}>
-            {new Date(candidate.createdAt).toLocaleDateString("en-IN", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </span>
+
+          <button
+            onClick={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSending(true);
+              try {
+                await axios.post(
+                  `${import.meta.env.VITE_API_URL}/api/admin/candidates/${id}/send-report`,
+                );
+                setSent(true);
+                setToast({
+                  msg: "Report sent to your email!",
+                  type: "success",
+                });
+              } catch (err) {
+                setToast({
+                  msg: err.response?.data?.error || "Failed to send email",
+                  type: "error",
+                });
+              } finally {
+                setSending(false);
+              }
+            }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: sent
+                ? "#f0fdf4"
+                : "linear-gradient(135deg,#2563eb,#0ea5e9)",
+              border: sent ? "1px solid #bbf7d0" : "none",
+              borderRadius: 8,
+              padding: "7px 16px",
+              cursor: "pointer",
+              fontSize: 13,
+              fontWeight: 600,
+              color: sent ? "#15803d" : "#fff",
+              fontFamily: "DM Sans,sans-serif",
+              opacity: sending ? 0.7 : 1,
+            }}
+          >
+            {sent
+              ? "✓ Report Sent"
+              : sending
+                ? "Sending…"
+                : "📧 Send Report to My Email"}
+          </button>
         </nav>
 
         <div

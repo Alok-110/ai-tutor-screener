@@ -1,37 +1,42 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+
 
 export default function Setup() {
-  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
   const [micTested, setMicTested] = useState(false);
   const [testing, setTesting] = useState(false);
-  const [focused, setFocused] = useState("");
   const [toast, setToast] = useState(null);
+  const navigate = useNavigate()
+
+  const showToast = (msg, type = "error") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   const testMic = async () => {
     setTesting(true);
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
       setMicTested(true);
+      showToast("Microphone is working!", "success");
     } catch {
-      alert(
-        "Microphone access denied. Please allow mic access in your browser settings.",
-      );
+      showToast("Mic access denied. Allow it in browser settings.");
     }
     setTesting(false);
   };
 
   const handleStart = () => {
-    if (!name.trim() || !role.trim())
-      return alert("Please enter your name and role.");
-    if (!micTested) return alert("Please test your microphone first.");
-    localStorage.setItem("candidateName", name);
-    localStorage.setItem("candidateRole", role);
+    if (!name.trim()) return showToast("Please enter your full name.");
+    if (!role) return showToast("Please select a role.");
     if (!email.trim() || !email.includes("@"))
       return showToast("Please enter a valid email.");
+    if (!micTested) return showToast("Please test your microphone first.");
+    localStorage.setItem("candidateName", name);
+    localStorage.setItem("candidateRole", role);
     localStorage.setItem("candidateEmail", email);
     navigate("/interview");
   };
@@ -63,65 +68,7 @@ export default function Setup() {
 
       <div className="setup">
         {/* Navbar */}
-        <nav
-          style={{
-            height: 60,
-            background: "rgba(238,244,255,0.9)",
-            backdropFilter: "blur(12px)",
-            display: "flex",
-            alignItems: "center",
-            padding: "0 52px",
-            justifyContent: "space-between",
-            borderBottom: "1px solid rgba(0,0,0,0.05)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              cursor: "pointer",
-            }}
-            onClick={() => navigate("/")}
-          >
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 8,
-                background: "#0a0a0a",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <span
-                style={{
-                  color: "#fff",
-                  fontSize: 14,
-                  fontWeight: 900,
-                  fontFamily: "'Bricolage Grotesque',sans-serif",
-                }}
-              >
-                C
-              </span>
-            </div>
-            <span
-              style={{
-                fontFamily: "'Bricolage Grotesque',sans-serif",
-                fontWeight: 800,
-                fontSize: 17,
-                color: "#0a0a0a",
-                letterSpacing: "-0.4px",
-              }}
-            >
-              Cuemath
-            </span>
-          </div>
-          <span style={{ fontSize: 13, color: "#9ca3af" }}>
-            Tutor Screening · Setup
-          </span>
-        </nav>
+        <Navbar label="Interview · Live" />
 
         {/* Main content */}
         <div
@@ -425,8 +372,7 @@ export default function Setup() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Priya Sharma"
-                onFocus={() => setFocused("name")}
-                onBlur={() => setFocused("")}
+                
               />
             </div>
 
@@ -496,10 +442,7 @@ export default function Setup() {
                 className="inp"
                 type="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError?.("");
-                }}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="e.g. priya@gmail.com"
               />
             </div>
