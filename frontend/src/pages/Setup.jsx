@@ -5,6 +5,7 @@ export default function Setup() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
+  const [email, setEmail] = useState("");
   const [micTested, setMicTested] = useState(false);
   const [testing, setTesting] = useState(false);
   const [focused, setFocused] = useState("");
@@ -29,6 +30,9 @@ export default function Setup() {
     if (!micTested) return alert("Please test your microphone first.");
     localStorage.setItem("candidateName", name);
     localStorage.setItem("candidateRole", role);
+    if (!email.trim() || !email.includes("@"))
+      return showToast("Please enter a valid email.");
+    localStorage.setItem("candidateEmail", email);
     navigate("/interview");
   };
 
@@ -464,6 +468,40 @@ export default function Setup() {
                   alt=""
                 />
               </div>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#374151",
+                  display: "block",
+                  marginBottom: 8,
+                }}
+              >
+                Email address
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: "#9ca3af",
+                    fontWeight: 400,
+                    marginLeft: 6,
+                  }}
+                >
+                  We'll send your results here
+                </span>
+              </label>
+              <input
+                className="inp"
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError?.("");
+                }}
+                placeholder="e.g. priya@gmail.com"
+              />
             </div>
 
             {/* Mic test */}

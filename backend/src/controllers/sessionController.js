@@ -1,13 +1,18 @@
-const Candidate = require('../models/Candidate.js');
-const { chat } = require('../services/geminiService.js');
-const { assess } = require('../services/assessmentService.js');
+const Candidate = require("../models/Candidate.js");
+const { chat } = require("../services/geminiService.js");
+const { assess } = require("../services/assessmentService.js");
 
 const startSession = async (req, res) => {
   try {
-    const { name, role } = req.body;
-    const candidate = await Candidate.create({ name, role, transcript: [] });
+    const { name, role, email } = req.body;
+    const candidate = await Candidate.create({
+      name,
+      role,
+      email,
+      transcript: [],
+    });
     const aiResponse = await chat([]);
-    candidate.transcript.push({ speaker: 'ai', text: aiResponse.text });
+    candidate.transcript.push({ speaker: "ai", text: aiResponse.text });
     await candidate.save();
     res.json({ candidateId: candidate._id, message: aiResponse.text });
   } catch (err) {
@@ -19,9 +24,9 @@ const sendMessage = async (req, res) => {
   try {
     const { candidateId, text } = req.body;
     const candidate = await Candidate.findById(candidateId);
-    candidate.transcript.push({ speaker: 'candidate', text });
+    candidate.transcript.push({ speaker: "candidate", text });
     const aiResponse = await chat(candidate.transcript);
-    candidate.transcript.push({ speaker: 'ai', text: aiResponse.text });
+    candidate.transcript.push({ speaker: "ai", text: aiResponse.text });
     await candidate.save();
     res.json({ message: aiResponse.text, isComplete: aiResponse.isComplete });
   } catch (err) {
