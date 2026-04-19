@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useSpeechRecognition from "../hooks/useSpeechRecognition";
 import useSpeechSynthesis from "../hooks/useSpeechSynthesis";
 import { startSession, sendMessage, endSession } from "../services/api";
+import Navbar from "../components/Navbar";
 
 export default function Interview() {
   const sendingRef = useRef(false);
@@ -111,7 +112,7 @@ export default function Interview() {
   const statusConfig = {
     connecting: { label: "Connecting…", color: "#9ca3af" },
     "ai-speaking": { label: "AI is speaking…", color: "#2563eb" },
-    listening: { label: "Your turn to speak", color: "#10b981" },
+    'listening': { label: 'Your turn — tap mic to speak', color: '#10b981' },
     processing: { label: "Processing…", color: "#f59e0b" },
     ending: { label: "Wrapping up…", color: "#9ca3af" },
   };
@@ -143,145 +144,7 @@ export default function Interview() {
 
       <div className="iv">
         {/* ── NAVBAR ── */}
-        <nav
-          style={{
-            height: 58,
-            background: "rgba(238,244,255,0.95)",
-            backdropFilter: "blur(12px)",
-            borderBottom: "1px solid rgba(0,0,0,0.06)",
-            display: "flex",
-            alignItems: "center",
-            padding: "0 28px",
-            justifyContent: "space-between",
-            flexShrink: 0,
-            zIndex: 10,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div
-              style={{
-                width: 30,
-                height: 30,
-                borderRadius: 8,
-                background: "#0a0a0a",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <span
-                style={{
-                  color: "#fff",
-                  fontSize: 13,
-                  fontWeight: 900,
-                  fontFamily: "'Bricolage Grotesque',sans-serif",
-                }}
-              >
-                C
-              </span>
-            </div>
-            <span
-              style={{
-                fontFamily: "'Bricolage Grotesque',sans-serif",
-                fontWeight: 800,
-                fontSize: 16,
-                color: "#0a0a0a",
-              }}
-            >
-              Cuemath
-            </span>
-            <span style={{ fontSize: 12, color: "#9ca3af", marginLeft: 4 }}>
-              · Screening Interview
-            </span>
-          </div>
-
-          {/* Progress pills */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: 12, color: "#9ca3af", marginRight: 4 }}>
-              Progress
-            </span>
-            {Array.from({ length: totalQuestions }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  width: 28,
-                  height: 6,
-                  borderRadius: 999,
-                  background:
-                    i < questionIndex
-                      ? "#2563eb"
-                      : i === questionIndex
-                        ? "rgba(37,99,235,0.3)"
-                        : "#e2e8f0",
-                  transition: "all .4s",
-                }}
-              />
-            ))}
-            <span
-              style={{
-                fontSize: 12,
-                color: "#6b7280",
-                marginLeft: 4,
-                fontWeight: 600,
-              }}
-            >
-              {Math.min(questionIndex + 1, 5)}/5
-            </span>
-          </div>
-
-          {/* Timer + candidate */}
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                background: "#fff",
-                border: "1px solid #e2e8f0",
-                borderRadius: 999,
-                padding: "6px 14px",
-              }}
-            >
-              <img
-                src="https://api.iconify.design/lucide:clock.svg?color=%236b7280&width=13"
-                width={13}
-                height={13}
-                alt=""
-              />
-              <span
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "#374151",
-                  fontFamily: "monospace",
-                }}
-              >
-                {formatTime(elapsed)}
-              </span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-              <div
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg,#2563eb,#0ea5e9)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#fff",
-                  fontSize: 12,
-                  fontWeight: 700,
-                }}
-              >
-                {name[0].toUpperCase()}
-              </div>
-              <span style={{ fontSize: 13, fontWeight: 500, color: "#374151" }}>
-                {name}
-              </span>
-            </div>
-          </div>
-        </nav>
+        <Navbar label="Interview · Live" />
 
         {/* ── MAIN BODY ── */}
         <div
@@ -885,7 +748,35 @@ export default function Interview() {
                   </>
                 ) : (
                   <span style={{ fontSize: 12, color: "#9ca3af" }}>
-                    {status === "listening" ? "Press mic to speak" : ""}
+                    {status === "listening" && !listening && (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          background: "#eff6ff",
+                          border: "1px solid #bfdbfe",
+                          borderRadius: 10,
+                          padding: "8px 16px",
+                        }}
+                      >
+                        <img
+                          src="https://api.iconify.design/lucide:mic.svg?color=%232563eb&width=14"
+                          width={14}
+                          height={14}
+                          alt=""
+                        />
+                        <span
+                          style={{
+                            fontSize: 13,
+                            color: "#2563eb",
+                            fontWeight: 600,
+                          }}
+                        >
+                          Tap the mic button to speak
+                        </span>
+                      </div>
+                    )}
                   </span>
                 )}
               </div>

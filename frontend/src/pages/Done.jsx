@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar'
+
 
 const EMOJIS = [
   { emoji: '😤', label: 'Rough' },
@@ -44,15 +46,7 @@ export default function Done() {
       <div className="done">
 
         {/* Navbar */}
-        <nav style={{height:58,background:'rgba(238,244,255,0.95)',backdropFilter:'blur(12px)',borderBottom:'1px solid rgba(0,0,0,0.06)',display:'flex',alignItems:'center',padding:'0 48px',justifyContent:'space-between'}}>
-          <div style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}} onClick={() => navigate('/')}>
-            <div style={{width:30,height:30,borderRadius:8,background:'#0a0a0a',display:'flex',alignItems:'center',justifyContent:'center'}}>
-              <span style={{color:'#fff',fontSize:13,fontWeight:900,fontFamily:"'Bricolage Grotesque',sans-serif"}}>C</span>
-            </div>
-            <span style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,fontSize:16,color:'#0a0a0a'}}>Cuemath</span>
-          </div>
-          <span style={{fontSize:12,color:'#9ca3af'}}>Interview Complete</span>
-        </nav>
+        <Navbar label="Interview Complete" />
 
         <div style={{maxWidth:1000,margin:'0 auto',padding:'48px 40px',display:'flex',flexDirection:'column',gap:28}}>
 
@@ -201,8 +195,7 @@ export default function Done() {
                   placeholder="Anything else you'd like to share? (optional)"
                   rows={3}
                   style={{width:'100%',padding:'14px 16px',border:'1.5px solid #e2e8f0',borderRadius:12,fontSize:14,fontFamily:'DM Sans,sans-serif',color:'#374151',outline:'none',resize:'none',marginBottom:16,transition:'border-color .2s'}}
-                  onFocus={e => e.target.style.borderColor='#2563eb'}
-                  onBlur={e => e.target.style.borderColor='#e2e8f0'}
+                  
                 />
 
                 <div style={{display:'flex',gap:12,alignItems:'center'}}>
