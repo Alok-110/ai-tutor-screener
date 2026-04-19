@@ -16,13 +16,16 @@ router.delete('/candidates/:id', async (req, res) => {
 
 router.patch('/candidates/:id/status', async (req, res) => {
   try {
+    console.log('PATCH hit:', req.params.id, req.body)
     const candidate = await require('../models/Candidate').findByIdAndUpdate(
       req.params.id,
-      { adminStatus: req.body.adminStatus },
-      { new: true }
+      { $set: { adminStatus: req.body.adminStatus } },
+      { returnDocument: 'after' }
     )
+    console.log('Updated adminStatus:', candidate?.adminStatus)
     res.json(candidate)
   } catch (err) {
+    console.error('PATCH error:', err)
     res.status(500).json({ error: err.message })
   }
 })

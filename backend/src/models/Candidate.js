@@ -4,6 +4,7 @@ const candidateSchema = new mongoose.Schema({
   name: String,
   role: String,
   adminStatus: String,
+  email: { type: String, default: '' },
   transcript: [
     {
       speaker: String, 
@@ -20,6 +21,7 @@ const candidateSchema = new mongoose.Schema({
     summary: String,
     quotes: Object
   },
+  adminStatus: { type: String, default: 'Pending Review' },
   createdAt: { type: Date, default: Date.now }
 });
 

@@ -34,7 +34,8 @@ export default function Interview() {
       const name = localStorage.getItem('candidateName')
       const role = localStorage.getItem('candidateRole')
       if (!name || !role) return navigate('/')
-      const res = await startSession(name, role)
+      const email = localStorage.getItem('candidateEmail') || ''
+      const res = await startSession(name, role, email)
       setCandidateId(res.data.candidateId)
       addMessage('ai', res.data.message)
       speakAI(res.data.message)

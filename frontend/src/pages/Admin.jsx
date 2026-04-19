@@ -57,11 +57,19 @@ export default function Admin() {
   }
 
   const handleStatusUpdate = async (id, status) => {
-    setUpdatingId(id)
-    await axios.patch(`${import.meta.env.VITE_API_URL}/api/admin/candidates/${id}/status`, { adminStatus: status })
+  setUpdatingId(id)
+  try {
+    const res = await axios.patch(
+      `${import.meta.env.VITE_API_URL}/api/admin/candidates/${id}/status`,
+      { adminStatus: status }
+    )
+    console.log('Frontend response:', res.data)
     setCandidates(prev => prev.map(c => c._id === id ? { ...c, adminStatus: status } : c))
-    setUpdatingId(null)
+  } catch (err) {
+    console.error('Frontend error:', err)
   }
+  setUpdatingId(null)
+}
 
   const avgScore = (a) => {
     if (!a) return null

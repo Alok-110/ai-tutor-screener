@@ -2,7 +2,7 @@ const Candidate = require('../models/Candidate.js');
 
 const getAllCandidates = async (req, res) => {
   try {
-    const candidates = await Candidate.find({}, 'name role assessment createdAt');
+    const candidates = await Candidate.find({}, 'name role assessment adminStatus createdAt');
     res.json(candidates);
   } catch (err) {
     res.status(500).json({ error: err.message });
