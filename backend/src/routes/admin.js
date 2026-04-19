@@ -30,4 +30,24 @@ router.patch('/candidates/:id/status', async (req, res) => {
   }
 })
 
+router.post('/candidates/:id/send-report', async (req, res) => {
+  try {
+    const Candidate = require('../models/Candidate')
+    const { sendReport } = require('../services/emailService')
+    const candidate = await Candidate.findById(req.params.id)
+    if (!candidate) return res.status(404).json({ error: 'Candidate not found' })
+    if (!candidate.email) return res.status(400).json({ error: 'No email on file for this candidate' })
+    if (!candidate.assessment) return res.status(400).json({ error: 'Assessment not ready yet' })
+    await sendReport({
+      candidateEmail: candidate.email,
+      candidateName: candidate.name,
+      assessment: candidate.assessment,
+      role: candidate.role,
+    })
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 module.exports = router;
