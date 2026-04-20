@@ -2,7 +2,7 @@
 
 > **AI Builder Challenge — Problem 3: The AI Tutor Screener**
 
-Live demo: https://ai-tutor-screener-brown.vercel.app/ 
+Live demo: [https://ai-tutor-screener-brown.vercel.app/ ](https://ai-tutor-screener-brown.vercel.app/)
 Video walkthrough: [your-loom-link](https://loom.com)
 
 ---
