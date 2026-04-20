@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useSpeechRecognition from "../hooks/useSpeechRecognition";
 import useSpeechSynthesis from "../hooks/useSpeechSynthesis";
-import { startSession, sendMessage, endSession, speakText } from "../services/api";
+import { startSession, sendMessage, endSession } from "../services/api";
 import Navbar from "../components/Navbar";
 
 
@@ -60,34 +60,44 @@ export default function Interview() {
     setMessages((prev) => [...prev, { speaker, text }]);
   };
 
-  const speakAI = async (text, onEnd) => {
+const speakAI = (text, onEnd) => {
   setStatus('ai-speaking')
   window.speechSynthesis.cancel()
 
-  try {
-    const res = await speakText(text)
-    const blob = new Blob([res.data], { type: 'audio/mpeg' })
-    const url = URL.createObjectURL(blob)
-    const audio = new Audio(url)
-    audio.onended = () => {
-      URL.revokeObjectURL(url)
-      setStatus('listening')
-      onEnd?.()
+  const utterance = new SpeechSynthesisUtterance(text)
+  utterance.lang = 'en-US'
+  utterance.rate = 0.9
+  utterance.pitch = 1.1
+  utterance.volume = 1
+
+  const speak = () => {
+    const voices = window.speechSynthesis.getVoices()
+    const preferred = [
+      'Microsoft Aria Online (Natural) - English (United States)',
+      'Microsoft Jenny Online (Natural) - English (United States)',
+      'Google UK English Female',
+      'Samantha',
+      'Karen',
+    ]
+    let picked = null
+    for (const name of preferred) {
+      picked = voices.find(v => v.name === name)
+      if (picked) break
     }
-    audio.onerror = () => {
-      URL.revokeObjectURL(url)
-      setStatus('listening')
-      onEnd?.()
-    }
-    audio.play()
-  } catch {
-    // Fallback to browser TTS if ElevenLabs fails
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = 'en-US'
-    utterance.rate = 0.88
-    utterance.pitch = 1.15
+    if (!picked) picked = voices.find(v => v.lang.startsWith('en'))
+    if (picked) utterance.voice = picked
     utterance.onend = () => { setStatus('listening'); onEnd?.() }
+    utterance.onerror = () => { setStatus('listening'); onEnd?.() }
     window.speechSynthesis.speak(utterance)
+  }
+
+  if (window.speechSynthesis.getVoices().length > 0) {
+    speak()
+  } else {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.onvoiceschanged = null
+      speak()
+    }
   }
 }
 
