@@ -12,7 +12,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://your-vercel-url.vercel.app'
+    'https://ai-tutor-screener-brown.vercel.app/'
   ],
   credentials: true
 }))
