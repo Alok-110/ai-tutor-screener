@@ -47,6 +47,7 @@ export default function Report() {
   const [candidate, setCandidate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const [customMsg, setCustomMsg] = useState("");
 
   useEffect(() => {
     if (!toast) return;
@@ -249,54 +250,6 @@ export default function Report() {
               · Assessment Report
             </span>
           </div>
-
-          <button
-            onClick={async (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setSending(true);
-              try {
-                await axios.post(
-                  `${import.meta.env.VITE_API_URL}/api/admin/candidates/${id}/send-report`,
-                );
-                setSent(true);
-                setToast({
-                  msg: "Report sent to your email!",
-                  type: "success",
-                });
-              } catch (err) {
-                setToast({
-                  msg: err.response?.data?.error || "Failed to send email",
-                  type: "error",
-                });
-              } finally {
-                setSending(false);
-              }
-            }}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              background: sent
-                ? "#f0fdf4"
-                : "linear-gradient(135deg,#2563eb,#0ea5e9)",
-              border: sent ? "1px solid #bbf7d0" : "none",
-              borderRadius: 8,
-              padding: "7px 16px",
-              cursor: "pointer",
-              fontSize: 13,
-              fontWeight: 600,
-              color: sent ? "#15803d" : "#fff",
-              fontFamily: "DM Sans,sans-serif",
-              opacity: sending ? 0.7 : 1,
-            }}
-          >
-            {sent
-              ? "✓ Report Sent"
-              : sending
-                ? "Sending…"
-                : "📧 Send Report to My Email"}
-          </button>
         </nav>
 
         <div
@@ -312,125 +265,286 @@ export default function Report() {
           {/* ── HERO HEADER ── */}
           <div
             style={{
-              background: "linear-gradient(135deg,#0f172a,#1e3a8a)",
+              background:
+                "linear-gradient(135deg,#eff6ff 0%,#dbeafe 50%,#e0f2fe 100%)",
               borderRadius: 24,
               padding: "36px 40px",
               display: "grid",
-              gridTemplateColumns: "1fr auto",
+              gridTemplateColumns: "1fr 1fr",
               gap: 32,
-              alignItems: "center",
+              alignItems: "stretch",
+              border: "1px solid #bfdbfe",
             }}
           >
-            <div>
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "rgba(255,255,255,0.35)",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  marginBottom: 10,
-                }}
-              >
-                Assessment Report
-              </div>
-              <h1
-                style={{
-                  fontFamily: "'Bricolage Grotesque',sans-serif",
-                  fontSize: 38,
-                  fontWeight: 900,
-                  color: "#fff",
-                  letterSpacing: "-0.8px",
-                  marginBottom: 8,
-                }}
-              >
-                {candidate.name}
-              </h1>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 16,
-                  flexWrap: "wrap",
-                }}
-              >
-                <span style={{ fontSize: 14, color: "rgba(255,255,255,0.5)" }}>
-                  {candidate.role}
-                </span>
-                <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
-                <span style={{ fontSize: 14, color: "rgba(255,255,255,0.5)" }}>
-                  {candidate.transcript?.length || 0} messages exchanged
-                </span>
-              </div>
-            </div>
+            {/* Left — candidate info */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
+                justifyContent: "space-between",
                 gap: 16,
               }}
             >
-              {/* Big score circle */}
-              <div
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: "50%",
-                  border: "3px solid rgba(255,255,255,0.1)",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "rgba(255,255,255,0.05)",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "'Bricolage Grotesque',sans-serif",
-                    fontSize: 30,
-                    fontWeight: 900,
-                    color: "#fff",
-                    lineHeight: 1,
-                  }}
-                >
-                  {avg}
-                </span>
-                <span
+              <div>
+                <div
                   style={{
                     fontSize: 11,
-                    color: "rgba(255,255,255,0.4)",
-                    marginTop: 2,
+                    fontWeight: 700,
+                    color: "#3b82f6",
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    marginBottom: 10,
                   }}
                 >
-                  / 5.0
-                </span>
+                  Assessment Report
+                </div>
+                <h1
+                  style={{
+                    fontFamily: "'Bricolage Grotesque',sans-serif",
+                    fontSize: 36,
+                    fontWeight: 900,
+                    color: "#0f172a",
+                    letterSpacing: "-0.8px",
+                    marginBottom: 8,
+                  }}
+                >
+                  {candidate.name}
+                </h1>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    flexWrap: "wrap",
+                    marginBottom: 16,
+                  }}
+                >
+                  <span style={{ fontSize: 13, color: "#64748b" }}>
+                    {candidate.role}
+                  </span>
+                  <span style={{ color: "#cbd5e1" }}>·</span>
+                  <span style={{ fontSize: 13, color: "#64748b" }}>
+                    {candidate.transcript?.length || 0} messages
+                  </span>
+                  <span style={{ color: "#cbd5e1" }}>·</span>
+                  <span style={{ fontSize: 13, color: "#64748b" }}>
+                    {candidate.email || "No email"}
+                  </span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div
+                    style={{
+                      background: "#fff",
+                      border: `1px solid ${rc.border}`,
+                      borderRadius: 999,
+                      padding: "8px 20px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: "50%",
+                        background: rc.dot,
+                        display: "inline-block",
+                      }}
+                    />
+                    <span
+                      style={{ fontSize: 13, fontWeight: 700, color: rc.text }}
+                    >
+                      {a?.recommendation || "Pending"}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      background: "#fff",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: 999,
+                      padding: "8px 20px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "'Bricolage Grotesque',sans-serif",
+                        fontSize: 20,
+                        fontWeight: 900,
+                        color: "#0f172a",
+                      }}
+                    >
+                      {avg}
+                    </span>
+                    <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                      /5.0 avg
+                    </span>
+                  </div>
+                </div>
               </div>
-              {/* Recommendation badge */}
+            </div>
+
+            {/* Right — email action card */}
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 16,
+                padding: "24px",
+                border: "1px solid #e2e8f0",
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+              }}
+            >
               <div
                 style={{
-                  background: rc.bg,
-                  border: `1px solid ${rc.border}`,
-                  borderRadius: 999,
-                  padding: "8px 20px",
                   display: "flex",
                   alignItems: "center",
-                  gap: 8,
+                  gap: 10,
+                  marginBottom: 4,
                 }}
               >
-                <span
+                <div
                   style={{
-                    width: 7,
-                    height: 7,
-                    borderRadius: "50%",
-                    background: rc.dot,
-                    display: "inline-block",
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
+                    background: "linear-gradient(135deg,#2563eb,#0ea5e9)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
-                />
-                <span style={{ fontSize: 14, fontWeight: 700, color: rc.text }}>
-                  {a?.recommendation || "Pending"}
-                </span>
+                >
+                  <img
+                    src="https://api.iconify.design/lucide:mail.svg?color=white&width=16"
+                    width={16}
+                    height={16}
+                    alt=""
+                  />
+                </div>
+                <div>
+                  <div
+                    style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}
+                  >
+                    Send Report to Admin
+                  </div>
+                  <div style={{ fontSize: 11, color: "#9ca3af" }}>
+                    Includes scores, summary & quotes
+                  </div>
+                </div>
               </div>
+
+              <div>
+                <label
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#374151",
+                    display: "block",
+                    marginBottom: 6,
+                  }}
+                >
+                  Add a note (optional)
+                </label>
+                <textarea
+                  value={customMsg}
+                  onChange={(e) => setCustomMsg(e.target.value)}
+                  placeholder="e.g. Strong candidate — recommend for next round. Particularly impressed by their patience examples."
+                  rows={3}
+                  style={{
+                    width: "100%",
+                    padding: "10px 13px",
+                    border: "1.5px solid #e2e8f0",
+                    borderRadius: 10,
+                    fontSize: 13,
+                    fontFamily: "DM Sans,sans-serif",
+                    color: "#374151",
+                    outline: "none",
+                    resize: "none",
+                    transition: "border-color .2s",
+                    lineHeight: 1.55,
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "#2563eb")}
+                  onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
+                />
+              </div>
+
+              <button
+                onClick={async (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setSending(true);
+                  try {
+                    await axios.post(
+                      `${import.meta.env.VITE_API_URL}/api/admin/candidates/${id}/send-report`,
+                      { customMsg },
+                    );
+                    setSent(true);
+                    setToast({
+                      msg: "Report sent to your email!",
+                      type: "success",
+                    });
+                  } catch (err) {
+                    setToast({
+                      msg: err.response?.data?.error || "Failed to send email",
+                      type: "error",
+                    });
+                  } finally {
+                    setSending(false);
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "13px",
+                  background: sent
+                    ? "#f0fdf4"
+                    : "linear-gradient(135deg,#2563eb,#0ea5e9)",
+                  border: sent ? "1px solid #bbf7d0" : "none",
+                  borderRadius: 10,
+                  cursor: sending ? "not-allowed" : "pointer",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: sent ? "#15803d" : "#fff",
+                  fontFamily: "DM Sans,sans-serif",
+                  opacity: sending ? 0.7 : 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  transition: "opacity .2s",
+                }}
+              >
+                {sent ? (
+                  <>✓ Report Sent</>
+                ) : sending ? (
+                  <>Sending…</>
+                ) : (
+                  <>
+                    <img
+                      src="https://api.iconify.design/lucide:send.svg?color=white&width=15"
+                      width={15}
+                      height={15}
+                      alt=""
+                    />
+                    Send Report to My Email
+                  </>
+                )}
+              </button>
+
+              <p
+                style={{
+                  fontSize: 11,
+                  color: "#9ca3af",
+                  textAlign: "center",
+                  lineHeight: 1.5,
+                }}
+              >
+                Report goes to your registered admin email. AI suggestion is
+                advisory — final decision is yours.
+              </p>
             </div>
           </div>
 

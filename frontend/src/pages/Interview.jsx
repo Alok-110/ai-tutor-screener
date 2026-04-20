@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useSpeechRecognition from "../hooks/useSpeechRecognition";
 import useSpeechSynthesis from "../hooks/useSpeechSynthesis";
-import { startSession, sendMessage, endSession } from "../services/api";
+import { startSession, sendMessage, endSession, speakText } from "../services/api";
 import Navbar from "../components/Navbar";
+
 
 export default function Interview() {
   const sendingRef = useRef(false);
@@ -20,10 +21,12 @@ export default function Interview() {
   const pendingTranscript = useRef("");
 
   const { listening, startListening, stopListening } = useSpeechRecognition({
-    onFinalTranscript: (text) => {
-      pendingTranscript.current = text;
-    },
-  });
+  onFinalTranscript: (text) => {
+    console.log('Got transcript in Interview:', text)
+    pendingTranscript.current = text
+    setTimeout(() => handleSend(), 100)
+  }
+})
   const { speak, cancel } = useSpeechSynthesis();
 
   // Timer
@@ -57,26 +60,36 @@ export default function Interview() {
     setMessages((prev) => [...prev, { speaker, text }]);
   };
 
-  const speakAI = (text, onEnd) => {
-    setStatus("ai-speaking");
-    const voices = window.speechSynthesis.getVoices();
-    const femaleVoice = voices.find(
-      (v) =>
-        v.name.includes("Female") ||
-        v.name.includes("Samantha") ||
-        v.name.includes("Google UK English Female"),
-    );
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = femaleVoice || voices[0];
-    utterance.rate = 0.95;
-    utterance.pitch = 1.1;
-    utterance.onend = () => {
-      setStatus("listening");
-      onEnd?.();
-    };
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  };
+  const speakAI = async (text, onEnd) => {
+  setStatus('ai-speaking')
+  window.speechSynthesis.cancel()
+
+  try {
+    const res = await speakText(text)
+    const blob = new Blob([res.data], { type: 'audio/mpeg' })
+    const url = URL.createObjectURL(blob)
+    const audio = new Audio(url)
+    audio.onended = () => {
+      URL.revokeObjectURL(url)
+      setStatus('listening')
+      onEnd?.()
+    }
+    audio.onerror = () => {
+      URL.revokeObjectURL(url)
+      setStatus('listening')
+      onEnd?.()
+    }
+    audio.play()
+  } catch {
+    // Fallback to browser TTS if ElevenLabs fails
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = 'en-US'
+    utterance.rate = 0.88
+    utterance.pitch = 1.15
+    utterance.onend = () => { setStatus('listening'); onEnd?.() }
+    window.speechSynthesis.speak(utterance)
+  }
+}
 
   const handleSend = async () => {
     if (sendingRef.current) return;
@@ -112,7 +125,7 @@ export default function Interview() {
   const statusConfig = {
     connecting: { label: "Connecting…", color: "#9ca3af" },
     "ai-speaking": { label: "AI is speaking…", color: "#2563eb" },
-    'listening': { label: 'Your turn — tap mic to speak', color: '#10b981' },
+    listening: { label: "Your turn — tap mic to speak", color: "#10b981" },
     processing: { label: "Processing…", color: "#f59e0b" },
     ending: { label: "Wrapping up…", color: "#9ca3af" },
   };
@@ -660,9 +673,12 @@ export default function Interview() {
                     onClick={() => {
                       if (listening) {
                         stopListening();
-                        setTimeout(() => handleSend(), 600);
+                        // handleSend is now called from inside stopListening via callback
                       } else {
-                        if (status === "listening") startListening();
+                        if (status === "listening") {
+                          pendingTranscript.current = "";
+                          startListening();
+                        }
                       }
                     }}
                     disabled={status !== "listening"}
