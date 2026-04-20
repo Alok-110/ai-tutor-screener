@@ -7,6 +7,7 @@ const sendReport = async ({
   candidateName,
   assessment,
   role,
+  customMsg,
 }) => {
   const dims = ["clarity", "warmth", "simplicity", "fluency", "engagement"];
   const labels = {
@@ -114,6 +115,14 @@ const sendReport = async ({
   </div>`
       : ""
   }
+  ${customMsg ? `
+  <div class="section">
+    <div class="section-title">Recruiter Note</div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px;font-size:14px;color:#1e40af;line-height:1.7;font-style:italic;">"${customMsg}"</div>
+  </div>` : ''}
+
+  <div class="footer">
+    <p><strong>Cuemath Tutor Screening — Admin Copy</strong><br/>
 
   <div class="footer">
     <p><strong>Cuemath Tutor Screening — Admin Copy</strong><br/>
@@ -128,7 +137,7 @@ AI suggestion is advisory only — final decision is yours.</p>
 
   const { data, error } = await resend.emails.send({
     from: "Cuemath Screener <onboarding@resend.dev>",
-    to: "zaemonb742@gmail.com",
+    to: process.env.ADMIN_EMAIL,
     subject: `[Cuemath Screener] Report for ${candidateName} — ${assessment.recommendation}`,
     html,
   });

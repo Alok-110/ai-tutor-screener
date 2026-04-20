@@ -34,6 +34,7 @@ router.post('/candidates/:id/send-report', async (req, res) => {
   try {
     const Candidate = require('../models/Candidate')
     const { sendReport } = require('../services/emailService')
+    const { customMsg } = req.body
     const candidate = await Candidate.findById(req.params.id)
     if (!candidate) return res.status(404).json({ error: 'Candidate not found' })
     if (!candidate.email) return res.status(400).json({ error: 'No email on file for this candidate' })
@@ -43,6 +44,7 @@ router.post('/candidates/:id/send-report', async (req, res) => {
       candidateName: candidate.name,
       assessment: candidate.assessment,
       role: candidate.role,
+      customMsg,
     })
     res.json({ success: true })
   } catch (err) {
