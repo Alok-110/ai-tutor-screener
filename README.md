@@ -4,8 +4,6 @@
 
 Live demo: [https://ai-tutor-screener-brown.vercel.app/ ](https://ai-tutor-screener-brown.vercel.app/)
 
-Video walkthrough: [your-loom-link](https://loom.com)
-
 ---
 
 ## What I Built
