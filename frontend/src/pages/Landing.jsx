@@ -270,7 +270,7 @@ export default function Landing() {
                 inset: 0,
                 width: "100%",
                 height: "100%",
-                opacity: 0.18,
+                opacity: 0.22,
                 pointerEvents: "none",
               }}
             >
@@ -296,10 +296,10 @@ export default function Landing() {
               <path
                 id="flightPath"
                 className="path-line"
-                d="M 420 560
-         C 460 480, 80 440, 120 360
-         C 160 280, 440 260, 400 180
-         C 360 100, 100 80, 140 30"
+                d="M 480 580
+   C 520 480, 60 460, 100 360
+   C 150 250, 480 230, 440 140
+   C 400 60, 40 40, 80 -20"
               />
 
               {/* Paper plane traveling along path */}
